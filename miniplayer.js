@@ -205,54 +205,82 @@ window.LegalePlus = window.LegalePlus || {};
     ticker = setInterval(render, 1000);
   }
 
+  // Monta a lista por DOM (createElement + textContent), NUNCA por innerHTML: a
+  // página do Legale aplica Trusted Types/CSP, e mesmo na janela do mini player o
+  // `root.innerHTML = html` era barrado, então a janela abria mas a lista ficava
+  // vazia. Construir os nós elemento a elemento passa pela CSP e ainda escapa o
+  // texto sozinho (dispensa o esc() antigo).
   async function render() {
     if (!win || win.closed) return;
-    const arr = await listar();
-    const root = win.document.getElementById('lp-mp-root');
+    const doc = win.document;
+    const root = doc.getElementById('lp-mp-root');
     if (!root) return;
+
+    let arr;
+    try { arr = await listar(); } catch (_) { return; } // leitura falhou: mantém o que está na tela
     const rodando = arr.filter((m) => m.inicio && !m.fim).length;
 
-    let html = `<header><span>Cronômetros</span><span class="acoes">` +
-      `<button class="limpar" data-acao="limpar" title="Limpar a lista de cronômetros"${arr.length ? '' : ' disabled'}>Limpar</button>` +
-      `<span class="badge">${rodando} ativo(s)</span></span></header>`;
-    if (!arr.length) {
-      html += `<div class="vazio">Nenhum compromisso aqui ainda. No compromisso, clique em "Enviar ao mini player" para acompanhá-lo por aqui, mesmo em outra janela ou app.</div>`;
-    } else {
-      for (const m of arr) {
-        const emAndamento = m.inicio && !m.fim;
-        const pausado = m.inicio && m.fim;
-        const segs = m.inicio ? (emAndamento ? (Date.now() - m.inicio) : (m.fim - m.inicio)) / 1000 : 0;
-        const quando = m.inicio
-          ? (hhmm(m.inicio) + (m.fim ? ' → ' + hhmm(m.fim) : ' → …'))
-          : 'não iniciado';
-        html += `
-          <div class="item ${emAndamento ? 'rodando' : ''} ${pausado ? 'pausado' : ''}">
-            <div class="info">
-              <div class="tit" title="${esc(m.titulo)}">${esc(m.titulo)}</div>
-              <div class="tempo">${LP.fmtDuracao(segs)}</div>
-              <div class="quando">${quando}</div>
-            </div>
-            <button class="btn" data-acao="toggle" data-id="${m.mid}" title="${emAndamento ? 'Pausar (grava o fim)' : (pausado ? 'Novo marcador' : 'Iniciar')}">${emAndamento ? '⏸' : '▶'}</button>
-            <button class="ts" data-acao="ts" data-id="${m.mid}" title="Encerrar e lançar time sheet">🕐</button>
-            <button class="x" data-acao="rm" data-id="${m.mid}" title="Fechar o compromisso e remover da lista">✕</button>
-          </div>`;
-      }
-    }
-    root.innerHTML = html;
-    root.querySelectorAll('[data-acao]').forEach((b) => {
-      b.onclick = () => {
-        const id = b.getAttribute('data-id');
-        const acao = b.getAttribute('data-acao');
-        if (acao === 'toggle') alternar(id);
-        else if (acao === 'ts') encerrar(id);   // 🕐: encerra e abre o popup de lançamento
-        else if (acao === 'limpar') limparTudo();
-        else remover(id);                        // ✕: fecha o compromisso e tira da lista
-      };
-    });
-  }
+    const el = (tag, cls, txt) => {
+      const n = doc.createElement(tag);
+      if (cls) n.className = cls;
+      if (txt != null) n.textContent = txt;
+      return n;
+    };
 
-  function esc(s) {
-    return String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    while (root.firstChild) root.removeChild(root.firstChild);
+
+    const header = el('header');
+    header.appendChild(el('span', null, 'Cronômetros'));
+    const acoes = el('span', 'acoes');
+    const btnLimpar = el('button', 'limpar', 'Limpar');
+    btnLimpar.title = 'Limpar a lista de cronômetros';
+    btnLimpar.disabled = !arr.length;
+    btnLimpar.onclick = () => limparTudo();
+    acoes.appendChild(btnLimpar);
+    acoes.appendChild(el('span', 'badge', rodando + ' ativo(s)'));
+    header.appendChild(acoes);
+    root.appendChild(header);
+
+    if (!arr.length) {
+      root.appendChild(el('div', 'vazio',
+        'Nenhum compromisso aqui ainda. No compromisso, clique em "Enviar ao mini player" para acompanhá-lo por aqui, mesmo em outra janela ou app.'));
+      return;
+    }
+
+    for (const m of arr) {
+      const emAndamento = m.inicio && !m.fim;
+      const pausado = m.inicio && m.fim;
+      const segs = m.inicio ? (emAndamento ? (Date.now() - m.inicio) : (m.fim - m.inicio)) / 1000 : 0;
+      const quando = m.inicio
+        ? (hhmm(m.inicio) + (m.fim ? ' → ' + hhmm(m.fim) : ' → …'))
+        : 'não iniciado';
+
+      const item = el('div', 'item' + (emAndamento ? ' rodando' : '') + (pausado ? ' pausado' : ''));
+      const info = el('div', 'info');
+      const tit = el('div', 'tit', m.titulo);
+      tit.title = m.titulo || '';
+      info.appendChild(tit);
+      info.appendChild(el('div', 'tempo', LP.fmtDuracao(segs)));
+      info.appendChild(el('div', 'quando', quando));
+      item.appendChild(info);
+
+      const btn = el('button', 'btn', emAndamento ? '⏸' : '▶');
+      btn.title = emAndamento ? 'Pausar (grava o fim)' : (pausado ? 'Novo marcador' : 'Iniciar');
+      btn.onclick = () => alternar(m.mid);
+      item.appendChild(btn);
+
+      const ts = el('button', 'ts', '🕐');
+      ts.title = 'Encerrar e lançar time sheet';
+      ts.onclick = () => encerrar(m.mid);   // 🕐: encerra e abre o popup de lançamento
+      item.appendChild(ts);
+
+      const x = el('button', 'x', '✕');
+      x.title = 'Fechar o compromisso e remover da lista';
+      x.onclick = () => remover(m.mid);     // ✕: fecha o compromisso e tira da lista
+      item.appendChild(x);
+
+      root.appendChild(item);
+    }
   }
 
   LP.miniplayer = {

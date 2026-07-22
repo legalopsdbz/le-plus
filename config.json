@@ -1,11 +1,10 @@
 {
-  "versao": "0.17.8",
+  "versao": "0.17.9",
   "features": {
     "expandirCompromissos": true,
     "cronometroTimesheet": true,
     "ocultarConcluidos": false,
     "modoNoturno": true,
-    "modoDaltonico": true,
     "arrastarReagendar": true
   },
   "scripts": [
@@ -14,12 +13,6 @@
       "mundo": "ISOLADO",
       "quando": "inicio",
       "url": "https://legalopsdbz.github.io/le-plus/darkmode-boot.js"
-    },
-    {
-      "arquivo": "src/daltonico-boot.js",
-      "mundo": "ISOLADO",
-      "quando": "inicio",
-      "url": "https://legalopsdbz.github.io/le-plus/daltonico-boot.js"
     },
     {
       "arquivo": "src/config.js",
@@ -88,12 +81,6 @@
       "url": "https://legalopsdbz.github.io/le-plus/darkmode.js"
     },
     {
-      "arquivo": "src/daltonico.js",
-      "mundo": "ISOLADO",
-      "quando": "pronto",
-      "url": "https://legalopsdbz.github.io/le-plus/daltonico.js"
-    },
-    {
       "arquivo": "src/page-render.js",
       "mundo": "PRINCIPAL",
       "quando": "pronto",
@@ -108,10 +95,6 @@
     {
       "arquivo": "src/dark.css",
       "url": "https://legalopsdbz.github.io/le-plus/dark.css"
-    },
-    {
-      "arquivo": "src/daltonico.css",
-      "url": "https://legalopsdbz.github.io/le-plus/daltonico.css"
     }
   ]
 }
