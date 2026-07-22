@@ -1,0 +1,117 @@
+{
+  "versao": "0.17.8",
+  "features": {
+    "expandirCompromissos": true,
+    "cronometroTimesheet": true,
+    "ocultarConcluidos": false,
+    "modoNoturno": true,
+    "modoDaltonico": true,
+    "arrastarReagendar": true
+  },
+  "scripts": [
+    {
+      "arquivo": "src/darkmode-boot.js",
+      "mundo": "ISOLADO",
+      "quando": "inicio",
+      "url": "https://legalopsdbz.github.io/le-plus/darkmode-boot.js"
+    },
+    {
+      "arquivo": "src/daltonico-boot.js",
+      "mundo": "ISOLADO",
+      "quando": "inicio",
+      "url": "https://legalopsdbz.github.io/le-plus/daltonico-boot.js"
+    },
+    {
+      "arquivo": "src/config.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/config.js"
+    },
+    {
+      "arquivo": "src/catalogos.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/catalogos.js"
+    },
+    {
+      "arquivo": "src/util.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/util.js"
+    },
+    {
+      "arquivo": "src/timesheet-api.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/timesheet-api.js"
+    },
+    {
+      "arquivo": "src/miniplayer.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/miniplayer.js"
+    },
+    {
+      "arquivo": "src/meta2-cronometro.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/meta2-cronometro.js"
+    },
+    {
+      "arquivo": "src/content.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/content.js"
+    },
+    {
+      "arquivo": "src/botao-concluidos.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/botao-concluidos.js"
+    },
+    {
+      "arquivo": "src/busca-tarefa.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/busca-tarefa.js"
+    },
+    {
+      "arquivo": "src/drag-scroll.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/drag-scroll.js"
+    },
+    {
+      "arquivo": "src/darkmode.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/darkmode.js"
+    },
+    {
+      "arquivo": "src/daltonico.js",
+      "mundo": "ISOLADO",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/daltonico.js"
+    },
+    {
+      "arquivo": "src/page-render.js",
+      "mundo": "PRINCIPAL",
+      "quando": "pronto",
+      "url": "https://legalopsdbz.github.io/le-plus/page-render.js"
+    }
+  ],
+  "css": [
+    {
+      "arquivo": "src/styles.css",
+      "url": "https://legalopsdbz.github.io/le-plus/styles.css"
+    },
+    {
+      "arquivo": "src/dark.css",
+      "url": "https://legalopsdbz.github.io/le-plus/dark.css"
+    },
+    {
+      "arquivo": "src/daltonico.css",
+      "url": "https://legalopsdbz.github.io/le-plus/daltonico.css"
+    }
+  ]
+}

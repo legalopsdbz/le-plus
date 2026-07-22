@@ -1,0 +1,13 @@
+/* Legale+ , Modo Daltônico: botão flutuante próprio, canto inferior esquerdo,
+ * logo acima do botão de modo noturno (que fica em bottom:18px). */
+#lp-cvd-btn {
+  position: fixed; left: 18px; bottom: 70px; z-index: 2147483000;
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid #B4892A; cursor: pointer;
+  background: #144D2E; color: #fff; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,.28); transition: background .15s, transform .15s;
+}
+#lp-cvd-btn:hover { transform: scale(1.06); }
+#lp-cvd-btn svg { width: 22px; height: 22px; display: block; }
+/* Ativo: inverte para dourado, indicando que o modo está ligado. */
+html.lp-cvd-on #lp-cvd-btn { background: #B4892A; color: #144D2E; border-color: #144D2E; }

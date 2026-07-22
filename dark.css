@@ -1,0 +1,428 @@
+/* Legale+ , Meta 4: Modo Noturno (tema escuro do Legale Web).
+ * Aplicado quando o <html> recebe a classe lp-dark-on (ligado pelo botão flutuante).
+ * Paleta institucional DBZ noturna. Escopo total: vale em todas as páginas e
+ * subpáginas do Legale, pois o content script roda em todo w1154.legaleweb.com.br.
+ * Estratégia: base escura no documento + reescrita das superfícies claras
+ * (cards, menus, tabelas, modais, formulários) e realce em dourado. */
+
+html.lp-dark-on {
+  /* Paleta */
+  --lp-bg: #0D1715;         /* fundo principal        */
+  --lp-bg2: #12211E;        /* fundo secundário       */
+  --lp-surface: #192C28;    /* cards e menus          */
+  --lp-surface2: #18322E;   /* cards em destaque      */
+  --lp-border: #30443F;     /* bordas discretas       */
+  --lp-gold: #C8AA77;       /* dourado principal      */
+  --lp-gold-h: #DEC493;     /* dourado hover          */
+  --lp-gold-d: #9F8357;     /* bronze dourado         */
+  --lp-text: #F1EEE7;       /* texto principal        */
+  --lp-text2: #B9B8AE;      /* texto secundário       */
+  --lp-text-dis: #727E79;   /* texto desabilitado     */
+  --lp-white: #FAF8F2;      /* off-white de apoio     */
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+html.lp-dark-on,
+html.lp-dark-on body,
+html.lp-dark-on .conteudoSite,
+html.lp-dark-on .conteudoSiteCompleto,
+html.lp-dark-on .container,
+html.lp-dark-on .container-fluid {
+  background-color: var(--lp-bg) !important;
+  color: var(--lp-text) !important;
+}
+html.lp-dark-on .row { background-color: transparent !important; }
+/* CORREÇÃO DO "BLOCO SÓLIDO" (modo noturno): os diálogos de detalhe do compromisso
+   (jconfirm) e os modais envolvem o conteúdo num `.container` do Bootstrap. A regra
+   de `.container` acima o pintava de fundo opaco (--lp-bg), criando um bloco que
+   tampava o calendário atrás do modal. Aqui esses containers DENTRO de overlays
+   voltam a ser transparentes, deixando o backdrop translúcido e o calendário à mostra.
+   Confirmado ao vivo: o culpado era `.jc-bs3-container.container` do jconfirm. */
+html.lp-dark-on .jconfirm .container,
+html.lp-dark-on .jconfirm .container-fluid,
+html.lp-dark-on .jc-bs3-container,
+html.lp-dark-on .jconfirm-scrollpane .container,
+html.lp-dark-on .modal .container,
+html.lp-dark-on .mbsc-fr .container { background-color: transparent !important; }
+
+/* Texto e títulos */
+html.lp-dark-on p,
+html.lp-dark-on span,
+html.lp-dark-on li,
+html.lp-dark-on td,
+html.lp-dark-on th,
+html.lp-dark-on dd,
+html.lp-dark-on dt,
+html.lp-dark-on label,
+html.lp-dark-on small,
+html.lp-dark-on div {
+  color: inherit;
+}
+html.lp-dark-on h1,
+html.lp-dark-on h2,
+html.lp-dark-on h3,
+html.lp-dark-on h4,
+html.lp-dark-on h5,
+html.lp-dark-on h6,
+html.lp-dark-on .titulo,
+html.lp-dark-on legend {
+  color: var(--lp-gold) !important;
+}
+html.lp-dark-on a { color: var(--lp-gold); }
+html.lp-dark-on a:hover { color: var(--lp-gold-h); }
+html.lp-dark-on hr { border-color: var(--lp-border) !important; }
+
+/* ---------- Cabeçalho ---------- */
+html.lp-dark-on header,
+html.lp-dark-on .main__header {
+  background-color: var(--lp-bg2) !important;
+  border-bottom: 1px solid var(--lp-border) !important;
+}
+html.lp-dark-on .main__header * { color: var(--lp-text) !important; }
+html.lp-dark-on .main__header .material-icons { color: var(--lp-gold) !important; }
+
+/* ---------- Barra lateral / menu ---------- */
+html.lp-dark-on nav,
+html.lp-dark-on .navbar,
+html.lp-dark-on .navbar-collapse,
+html.lp-dark-on .sidebar,
+html.lp-dark-on .menuLateral,
+html.lp-dark-on aside {
+  background-color: var(--lp-bg2) !important;
+}
+html.lp-dark-on nav a,
+html.lp-dark-on nav .material-icons { color: var(--lp-text2) !important; }
+html.lp-dark-on nav a:hover,
+html.lp-dark-on nav li.active > a { color: var(--lp-gold-h) !important; background-color: var(--lp-surface) !important; }
+
+/* ---------- Cards, painéis, caixas, menus suspensos ---------- */
+html.lp-dark-on .card,
+html.lp-dark-on .panel,
+html.lp-dark-on .panel-default,
+html.lp-dark-on .panel-body,
+html.lp-dark-on .box,
+html.lp-dark-on .well,
+html.lp-dark-on .widget,
+html.lp-dark-on .dropdown-menu,
+html.lp-dark-on .dropdownOpcoes,
+html.lp-dark-on .popover,
+html.lp-dark-on .list-group,
+html.lp-dark-on .list-group-item,
+html.lp-dark-on .tab-content,
+html.lp-dark-on .modal-content,
+html.lp-dark-on .modal-header,
+html.lp-dark-on .modal-body,
+html.lp-dark-on .modal-footer {
+  background-color: var(--lp-surface) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+
+/* Modal de compromisso aberto (compromisso__rapido): o cabeçalho vinha como um
+   bloco sólido na cor saturada do tipo, com o título em dourado ilegível sobre
+   ele. Aqui o cabeçalho recebe uma sobreposição escura (mantém o matiz do tipo,
+   sem o bloco berrante, harmonizado com a paleta) e o título fica branco com leve
+   sombra, legível em qualquer cor de tipo. */
+html.lp-dark-on .compromisso__rapido-header {
+  box-shadow: inset 0 0 0 2000px rgba(13, 23, 21, .42) !important;
+}
+html.lp-dark-on .compromisso__rapido-header,
+html.lp-dark-on .compromisso__rapido-header h4,
+html.lp-dark-on .compromisso__rapido-header * {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .55) !important;
+}
+html.lp-dark-on .panel-heading,
+html.lp-dark-on .card-header,
+html.lp-dark-on .modal-header {
+  background-color: var(--lp-surface2) !important;
+  color: var(--lp-gold) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .dropdown-menu > li > a { color: var(--lp-text) !important; }
+html.lp-dark-on .dropdown-menu > li > a:hover,
+html.lp-dark-on .list-group-item:hover { background-color: var(--lp-surface2) !important; color: var(--lp-gold-h) !important; }
+
+/* ---------- Tabelas ---------- */
+html.lp-dark-on table,
+html.lp-dark-on .table {
+  background-color: var(--lp-surface) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .table > thead > tr > th,
+html.lp-dark-on .table > thead > tr > td,
+html.lp-dark-on thead th {
+  background-color: var(--lp-surface2) !important;
+  color: var(--lp-gold) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .table > tbody > tr > td,
+html.lp-dark-on .table > tbody > tr > th,
+html.lp-dark-on td, html.lp-dark-on th {
+  border-color: var(--lp-border) !important;
+}
+/* Garante texto legível nas células, inclusive nas linhas listradas (o tema claro
+   do Legale usava uma cor de texto que sumia no escuro). Links seguem em dourado. */
+html.lp-dark-on .table > tbody > tr > td,
+html.lp-dark-on .table > tbody > tr > th { color: var(--lp-text) !important; }
+html.lp-dark-on .text-muted,
+html.lp-dark-on .text-secondary,
+html.lp-dark-on small { color: var(--lp-text2) !important; }
+html.lp-dark-on .table-striped > tbody > tr:nth-of-type(odd) { background-color: var(--lp-bg2) !important; }
+html.lp-dark-on .table-hover > tbody > tr:hover { background-color: var(--lp-surface2) !important; }
+
+/* ---------- Formulários ---------- */
+html.lp-dark-on .form-control,
+html.lp-dark-on input,
+html.lp-dark-on select,
+html.lp-dark-on textarea,
+html.lp-dark-on .input-group-addon {
+  background-color: var(--lp-bg2) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .form-control:focus {
+  border-color: var(--lp-gold) !important;
+  box-shadow: 0 0 0 2px rgba(200,170,119,.2) !important;
+}
+html.lp-dark-on ::placeholder { color: var(--lp-text-dis) !important; }
+html.lp-dark-on input:disabled,
+html.lp-dark-on .form-control[disabled],
+html.lp-dark-on [disabled] { color: var(--lp-text-dis) !important; }
+
+/* ---------- Botões ---------- */
+html.lp-dark-on .btn-default,
+html.lp-dark-on .btn-fab,
+html.lp-dark-on .btn-raised {
+  background-color: var(--lp-surface) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .btn-default:hover,
+html.lp-dark-on .btn-fab:hover,
+html.lp-dark-on .btn-raised:hover { background-color: var(--lp-surface2) !important; color: var(--lp-gold-h) !important; }
+html.lp-dark-on .btn-primary,
+html.lp-dark-on .btn-success {
+  background-color: var(--lp-gold-d) !important;
+  color: var(--lp-bg) !important;
+  border-color: var(--lp-gold-d) !important;
+}
+html.lp-dark-on .btn-primary:hover,
+html.lp-dark-on .btn-success:hover { background-color: var(--lp-gold) !important; }
+html.lp-dark-on .btn .material-icons { color: inherit !important; }
+
+/* ---------- Abas ---------- */
+html.lp-dark-on .nav-tabs { border-color: var(--lp-border) !important; }
+html.lp-dark-on .nav-tabs > li > a { color: var(--lp-text2) !important; border-color: transparent !important; }
+html.lp-dark-on .nav-tabs > li.active > a,
+html.lp-dark-on .nav-tabs > li > a:hover {
+  background-color: var(--lp-surface) !important;
+  color: var(--lp-gold-h) !important;
+  border-color: var(--lp-border) var(--lp-border) transparent !important;
+}
+
+/* ---------- Classes próprias do Legale ---------- */
+/* Tabelas footable, campos somente-leitura, linhas alternadas, select2. */
+html.lp-dark-on .footable,
+html.lp-dark-on .readOnly,
+html.lp-dark-on .maozinha,
+html.lp-dark-on .select2-selection,
+html.lp-dark-on .select2-selection--multiple,
+html.lp-dark-on .select2-dropdown,
+html.lp-dark-on .select2-search__field,
+html.lp-dark-on .select2-results__option {
+  background-color: var(--lp-surface) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .footable-header,
+html.lp-dark-on .footable thead,
+html.lp-dark-on .footable-header th {
+  background-color: var(--lp-surface2) !important;
+  color: var(--lp-gold) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .AreaCinza { background-color: var(--lp-bg2) !important; }
+html.lp-dark-on .select2-results__option--highlighted { background-color: var(--lp-surface2) !important; color: var(--lp-gold-h) !important; }
+html.lp-dark-on .select2-selection__choice { background-color: var(--lp-surface2) !important; color: var(--lp-text) !important; border-color: var(--lp-border) !important; }
+
+/* Popups que aparecem sob demanda (calendário de data, autocomplete, tooltips). */
+html.lp-dark-on .bootstrap-datetimepicker-widget,
+html.lp-dark-on .datepicker,
+html.lp-dark-on .datepicker-dropdown,
+html.lp-dark-on .ui-autocomplete,
+html.lp-dark-on .ui-menu,
+html.lp-dark-on .ui-widget-content,
+html.lp-dark-on .tooltip-inner,
+html.lp-dark-on .ui-datepicker {
+  background-color: var(--lp-surface) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .datepicker td,
+html.lp-dark-on .datepicker th,
+html.lp-dark-on .ui-menu-item,
+html.lp-dark-on .ui-datepicker td a { color: var(--lp-text) !important; }
+html.lp-dark-on .datepicker td.active,
+html.lp-dark-on .datepicker td:hover,
+html.lp-dark-on .ui-state-active,
+html.lp-dark-on .ui-menu-item:hover { background-color: var(--lp-surface2) !important; color: var(--lp-gold-h) !important; }
+
+/* Superfície escurecida pela rede de segurança JS (fundos claros sem cor forte).
+   Remove também gradientes/imagens claras de fundo (faixas de corte "Ver mais"). */
+html.lp-dark-on .lp-dark-fix { background-color: var(--lp-surface) !important; background-image: none !important; }
+html.lp-dark-on .lp-dark-fix-text { color: var(--lp-text) !important; }
+/* Bordas claras remanescentes ("faixas/bordas brancas" do modo escuro): a rede JS
+   marca o elemento com esta classe e o CSS recolore a borda de uma vez só (sem
+   estilo inline, sem flicker). Preserva bordas coloridas (não marcadas). */
+html.lp-dark-on .lp-dark-fix-bd { border-color: var(--lp-border) !important; }
+/* Véu translúcido para overlays/backdrops claros: escurece sem virar bloco opaco,
+   preservando a visão do calendário/página atrás do modal. Corrige o "bloco sólido". */
+html.lp-dark-on .lp-dark-fix-overlay { background-color: rgba(13, 23, 21, .55) !important; background-image: none !important; }
+
+/* Overlays de fade/transição do Legale (.esmaecer / .ease): apareciam como
+   FAIXAS BRANCAS e provocavam FLASH branco ao abrir pop-ups no modo escuro
+   (são elementos brancos no nível do body, usados nas transições da SPA). Aqui
+   removemos o branco (fundo transparente e sem gradiente), sem tirar a transição. */
+html.lp-dark-on .esmaecer,
+html.lp-dark-on .esmaecer.ease {
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-color: var(--lp-border) !important;
+}
+
+/* Observações truncadas com fade "ler mais" (Consultar Time Sheet): no modo
+   escuro, mostra o texto completo e remove o fade, deixando a leitura limpa.
+   O container .sidebar-box tinha altura fixa (120px) com overflow:hidden e o
+   .read-more era a faixa de degradê branco sobreposta ao final do texto. */
+html.lp-dark-on .sidebar-box:has(.read-more) { max-height: none !important; overflow: visible !important; }
+html.lp-dark-on .read-more { display: none !important; }
+html.lp-dark-on .fade-text { background-image: none !important; background-color: transparent !important; }
+
+/* ---------- LISTA de compromissos (Mobiscroll List View) ----------
+   A página /Compromisso usa a LISTA do Mobiscroll (mbsc-lv-*, mbsc-event-*), não o
+   calendário (mbsc-cal-*). Sem esta cobertura, os títulos de dia e os itens ficavam
+   com fundo claro (as "faixas brancas"). As cores dos tipos de compromisso são
+   bordas/marcadores coloridos, preservadas por não mexermos nelas. */
+html.lp-dark-on .mbsc-lv,
+html.lp-dark-on .mbsc-lv-cont,
+html.lp-dark-on [class*="mbsc-lv"],
+html.lp-dark-on [class*="mbsc-event"],
+html.lp-dark-on .mbsc-fr-w,
+html.lp-dark-on .mbsc-fr-c,
+html.lp-dark-on .mbsc-fr-popup,
+html.lp-dark-on .mbsc-lv-item {
+  background-color: var(--lp-surface) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+/* Título do dia na lista (faixa cinza): vira cabeçalho escuro com dourado. */
+html.lp-dark-on .mbsc-lv-gr-title,
+html.lp-dark-on .mbsc-event-day {
+  background-color: var(--lp-surface2) !important;
+  color: var(--lp-gold) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .mbsc-lv-item:hover { background-color: var(--lp-surface2) !important; }
+
+/* ---------- Calendário Mobiscroll (Agenda) ---------- */
+html.lp-dark-on .mbsc-fr-w,
+html.lp-dark-on .mbsc-cal,
+html.lp-dark-on .mbsc-cal-slide,
+html.lp-dark-on .mbsc-cal-c,
+html.lp-dark-on .mbsc-cal-day,
+html.lp-dark-on .mbsc-cal-cell {
+  background-color: var(--lp-bg) !important;
+  color: var(--lp-text) !important;
+  border-color: var(--lp-border) !important;
+}
+html.lp-dark-on .mbsc-cal-days > div,
+html.lp-dark-on .mbsc-cal-hdr,
+html.lp-dark-on .mbsc-cal-month,
+html.lp-dark-on .mbsc-cal-year { color: var(--lp-gold) !important; }
+html.lp-dark-on .mbsc-cal-day-date { color: var(--lp-text2) !important; }
+html.lp-dark-on .mbsc-cal-today .mbsc-cal-day-date,
+html.lp-dark-on .mbsc-cal-sel .mbsc-cal-day-date { color: var(--lp-gold-h) !important; }
+/* Rede CSS (além da JS): elimina as "faixas/bordas brancas" que sobram na grade do
+   calendário Mobiscroll no modo escuro. Recolore TODA borda de componentes mbsc-*
+   (as cores dos eventos são fundos, não bordas, então não são afetadas) e zera
+   sombras internas claras (algumas versões do Mobiscroll desenham as linhas da grade
+   com box-shadow, não com border). */
+html.lp-dark-on [class*="mbsc-"] { border-color: var(--lp-border) !important; }
+html.lp-dark-on .mbsc-cal-cell,
+html.lp-dark-on .mbsc-cal-day,
+html.lp-dark-on .mbsc-cal-row,
+html.lp-dark-on [class*="mbsc-cal-c"] { box-shadow: none !important; }
+
+/* Cartões da Meta 1 no tema escuro: a cor do tipo de tarefa (var --c) tinge o
+   cartão sobre uma base bem escura, diferenciando os tipos. O texto é branco puro
+   com leve sombra, para garantir ALTO contraste e leitura em qualquer cor de tipo,
+   inclusive nos tons mais claros (laranja, coral). Borda esquerda forte na cor. */
+html.lp-dark-on .lp-card {
+  background-color: color-mix(in srgb, var(--c, #144D2E) 16%, #14231d) !important;
+  color: #ffffff !important;
+  border-color: color-mix(in srgb, var(--c, #144D2E) 55%, var(--lp-border)) !important;
+  border-left: 5px solid var(--c, #144D2E) !important;
+}
+html.lp-dark-on .lp-card .lp-card-t { color: #ffffff !important; text-shadow: 0 1px 1.5px rgba(0, 0, 0, .6); }
+html.lp-dark-on .lp-card b { color: color-mix(in srgb, var(--c, #144D2E) 38%, #ffffff) !important; text-shadow: 0 1px 1.5px rgba(0, 0, 0, .6); }
+html.lp-dark-on .lp-card-add { background-color: var(--lp-surface2) !important; color: var(--lp-gold) !important; }
+html.lp-dark-on .lp-card-add:hover { background-color: var(--lp-gold) !important; color: var(--lp-bg) !important; }
+
+/* Componentes próprios da extensão no escuro */
+html.lp-dark-on .lp-modal { background-color: var(--lp-surface) !important; color: var(--lp-text) !important; }
+html.lp-dark-on .lp-modal h3 { color: var(--lp-gold) !important; }
+html.lp-dark-on .lp-campo input,
+html.lp-dark-on .lp-campo textarea,
+html.lp-dark-on .lp-linha-sel select { background-color: var(--lp-bg2) !important; color: var(--lp-text) !important; border-color: var(--lp-border) !important; }
+html.lp-dark-on .lp-lista { background-color: var(--lp-surface) !important; border-color: var(--lp-border) !important; }
+html.lp-dark-on .lp-op:hover { background-color: var(--lp-surface2) !important; }
+html.lp-dark-on .lp-cron { background-color: var(--lp-surface) !important; border-color: var(--lp-border) !important; color: var(--lp-text) !important; }
+html.lp-dark-on .lp-cancelar { background-color: var(--lp-surface2) !important; color: var(--lp-text) !important; }
+
+/* Barras de rolagem */
+html.lp-dark-on ::-webkit-scrollbar { width: 12px; height: 12px; }
+html.lp-dark-on ::-webkit-scrollbar-track { background: var(--lp-bg2); }
+html.lp-dark-on ::-webkit-scrollbar-thumb { background: var(--lp-border); border-radius: 6px; }
+html.lp-dark-on ::-webkit-scrollbar-thumb:hover { background: var(--lp-gold-d); }
+
+/* ---------- Botão flutuante Ligar/Desligar ---------- */
+#lp-darkmode-btn {
+  position: fixed; left: 18px; bottom: 18px; z-index: 2147483000;
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid #B4892A; cursor: pointer;
+  background: #144D2E; color: #fff; font-size: 20px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,.28); transition: background .15s, transform .15s;
+}
+#lp-darkmode-btn:hover { transform: scale(1.06); }
+html.lp-dark-on #lp-darkmode-btn { background: var(--lp-surface); border-color: var(--lp-gold); color: var(--lp-gold-h); }
+
+/* v0.10.0 , elementos novos no modo noturno (aditivo). */
+html.lp-dark-on .lp-fechar { background: var(--lp-surface); color: var(--lp-text); }
+html.lp-dark-on .lp-fechar:hover { background: #b3261e; color: #fff; }
+html.lp-dark-on .lp-teste-aviso {
+  background: color-mix(in srgb, var(--lp-gold) 16%, var(--lp-surface));
+  color: var(--lp-gold-h); border-color: var(--lp-gold-d);
+}
+html.lp-dark-on .lp-cron-ts { background: var(--lp-gold-d); color: var(--lp-bg); }
+html.lp-dark-on .lp-cron-ts:hover { background: var(--lp-gold); }
+html.lp-dark-on .lp-card-ts { background: var(--lp-surface); color: var(--lp-gold-h); }
+html.lp-dark-on .lp-card-ts:hover { background: var(--lp-gold); color: var(--lp-bg); }
+
+/* ===================== v0.15.0: Busca de Tarefas (modo noturno) ===================== */
+html.lp-dark-on #lp-busca-btn { background: var(--lp-surface); border: 1px solid var(--lp-gold); color: var(--lp-gold-h); }
+html.lp-dark-on .lp-busca-abas { border-bottom-color: var(--lp-border); }
+html.lp-dark-on .lp-aba { color: var(--lp-text); }
+html.lp-dark-on .lp-aba.ativa { color: var(--lp-gold-h); border-bottom-color: var(--lp-gold); }
+html.lp-dark-on .lp-busca-grid .lp-campo select,
+html.lp-dark-on .lp-busca-modal .lp-campo input { background: var(--lp-bg2); color: var(--lp-text); border-color: var(--lp-border); }
+html.lp-dark-on .lp-busca-status { color: var(--lp-text); }
+html.lp-dark-on .lp-limpar { background: var(--lp-bg2); color: var(--lp-text); }
+html.lp-dark-on .lp-tar { border-bottom-color: var(--lp-border); }
+html.lp-dark-on .lp-tar-t { color: var(--lp-text); }
+html.lp-dark-on .lp-tar-t b { color: var(--lp-gold-h); }
+html.lp-dark-on .lp-tar-sub { color: var(--lp-muted, #9aa); }
+html.lp-dark-on .lp-tar-abrir { background: var(--lp-surface); color: var(--lp-gold-h); border-color: var(--lp-gold); }

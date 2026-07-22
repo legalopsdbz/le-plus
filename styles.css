@@ -1,0 +1,280 @@
+/* Legale+ — estilos. Cores institucionais: verde #144D2E, dourado #B4892A. */
+
+/* --- Meta 1: mostrar TODOS os compromissos do dia (render próprio) --- */
+/* Quando o render próprio está ativo (classe lp-render-on no calendário),
+   escondemos tudo que é nativo dentro da área de eventos (rótulos, "Ver mais" e
+   o contador) e deixamos só os nossos cartões (.lp-card). A célula cresce com o
+   conteúdo, então todos aparecem, sem "Ver mais". */
+.lp-render-on .mbsc-cal-day-markup > *:not(.lp-card) {
+  display: none !important;
+}
+.lp-render-on .mbsc-cal-cell-i.mbsc-cal-day-i,
+.lp-render-on .mbsc-cal-cell.mbsc-cal-day,
+.lp-render-on .mbsc-cal-row {
+  height: auto !important;
+}
+.lp-render-on .mbsc-cal-day-markup {
+  max-height: none !important;
+  overflow: visible !important;
+}
+/* Anticorte da última semana. O Mobiscroll fixa a altura do calendário e usa
+   overflow:hidden; ao crescerem as células, a última linha era cortada. CUIDADO:
+   os meses vizinhos (anterior/próximo) ficam posicionados nas laterais dentro do
+   MESMO contêiner; liberar o overflow por completo faz eles vazarem por cima do
+   mini calendário da esquerda. Por isso recortamos apenas na HORIZONTAL
+   (esconde os meses vizinhos) e liberamos a VERTICAL (mostra todas as semanas).
+   Escopado por .lp-render-on, que existe só no calendário principal. */
+.lp-render-on .mbsc-cal-scroll-c,
+.lp-render-on .mbsc-fr-w {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+/* Trava o grid em 7 colunas iguais: evita header/datas desalinharem e a coluna
+   de sábado colapsar quando os cartões alargam as células (largura automática). */
+.lp-render-on .mbsc-cal-table { table-layout: fixed !important; width: 100% !important; }
+.lp-render-on .mbsc-cal-cell.mbsc-cal-day { width: 14.28% !important; vertical-align: top !important; }
+
+/* Cartão do compromisso: a COR DO TIPO de tarefa (var --c, herdada do próprio
+   Legale) passa a colorir o cartão, não só o filete. Fundo com uma leve tinta da
+   cor do tipo (mesclada ao branco, para harmonizar e manter contraste do texto),
+   borda esquerda forte na cor do tipo e borda geral no mesmo tom suavizado. Assim
+   cada tipo fica visualmente distinto e a leitura melhora. */
+.lp-card {
+  position: relative;
+  box-sizing: border-box;
+  max-width: 100%;
+  background: color-mix(in srgb, var(--c, #144D2E) 13%, #ffffff);
+  color: #1e2c26;
+  border: 1px solid color-mix(in srgb, var(--c, #144D2E) 45%, #d7ddd6);
+  border-left: 5px solid var(--c, #144D2E);
+  border-radius: 6px;
+  padding: 1px 16px 1px 6px;
+  margin: 2px 3px;
+  font-size: 11px;
+  line-height: 1.2;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 77, 46, .06);
+}
+/* Botão "enviar ao mini player" no canto do cartão */
+.lp-card-add {
+  position: absolute; top: 1px; right: 1px;
+  width: 14px; height: 14px; line-height: 12px; text-align: center;
+  border: none; border-radius: 3px; cursor: pointer;
+  background: #eef4f0; color: #144D2E; font-size: 12px; padding: 0;
+}
+.lp-card-add:hover { background: #B4892A; color: #fff; }
+/* Título do cartão: quebra limpa (palavras inteiras, sem cortar no meio) e no
+   máximo 3 linhas com reticências. O título completo continua no hover (atributo
+   title do cartão). Evita que compromissos de nome longo estiquem a célula e
+   desalinhem as semanas do mês. Ajuste puramente visual. */
+.lp-card .lp-card-t {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
+  overflow: hidden;
+}
+.lp-card b { font-weight: 600; color: color-mix(in srgb, var(--c, #144D2E) 70%, #10241d); }
+.lp-card { cursor: grab; user-select: none; }
+.lp-card:active { cursor: grabbing; }
+
+/* Arraste: cartão-fantasma que segue o cursor e destaque do dia alvo */
+.lp-card-ghost {
+  position: fixed; z-index: 999999; pointer-events: none;
+  max-width: 200px; opacity: .9;
+  box-shadow: 0 6px 18px rgba(0,0,0,.3);
+}
+.lp-alvo-dia { outline: 2px dashed #B4892A !important; outline-offset: -2px; background: rgba(180,137,42,.10) !important; }
+/* Overlay que "trava" o calendário durante o arraste (o Mobiscroll não desliza) */
+.lp-drag-overlay { position: fixed; inset: 0; z-index: 999990; cursor: grabbing; background: transparent; }
+
+/* --- Meta 2: cronômetro --- */
+.lp-cron {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 4px 8px; margin: 6px 0;
+  border: 1px solid #144D2E; border-radius: 6px;
+  background: #f3f8f4; font-size: 13px;
+}
+.lp-cron.rodando { border-color: #B4892A; background: #fbf6ea; }
+.lp-cron-btn {
+  cursor: pointer; border: none; background: #144D2E; color: #fff;
+  border-radius: 4px; padding: 3px 8px; font-size: 15px; line-height: 1;
+}
+.lp-cron.rodando .lp-cron-btn { background: #B4892A; }
+.lp-cron-display { font-variant-numeric: tabular-nums; font-weight: 600; }
+.lp-cron-player {
+  cursor: pointer; border: 1px solid #B4892A; background: #fff; color: #8a6a1f;
+  border-radius: 4px; padding: 3px 8px; font-size: 12px;
+}
+
+/* Botão flutuante que abre o mini player */
+#lp-launcher {
+  position: fixed; right: 18px; bottom: 18px; z-index: 2147483000;
+  width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+  background: #144D2E; color: #fff; font-size: 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.28);
+}
+#lp-launcher:hover { background: #1c6a3f; }
+.lp-cron-lancar {
+  cursor: pointer; border: 1px solid #144D2E; background: #fff; color: #144D2E;
+  border-radius: 4px; padding: 3px 8px; font-size: 12px;
+}
+
+/* Modal de confirmação */
+.lp-modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4);
+  display: flex; align-items: center; justify-content: center; z-index: 999999;
+}
+.lp-modal {
+  background: #fff; border-radius: 8px; padding: 20px 24px; max-width: 420px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25); font-size: 14px;
+}
+/* Barra de ações sempre visível ao rolar (não some ao expandir a seção Judicial) */
+.lp-modal-acoes {
+  position: sticky; bottom: -20px;
+  background: #fff; padding-bottom: 4px; padding-top: 8px;
+}
+.lp-modal h3 { margin: 0 0 12px; color: #144D2E; }
+
+.lp-modal p { margin: 4px 0; }
+
+/* Campos do modal */
+.lp-campo { margin: 8px 0; }
+.lp-campo > label { display: block; font-size: 13px; margin-bottom: 2px; }
+.lp-campo input, .lp-campo textarea { width: 100%; box-sizing: border-box; padding: 5px 7px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 13px; }
+
+/* Linha de horário início/fim editável + duração */
+.lp-linha-hora { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin: 6px 0 10px; }
+.lp-linha-hora .lp-campo { margin: 0; flex: 1 1 150px; }
+.lp-dur { font-size: 12px; color: #144D2E; padding-bottom: 6px; white-space: nowrap; }
+.lp-dur b { font-variant-numeric: tabular-nums; }
+
+/* Linha de selects (unidade / concluído) */
+.lp-linha-sel { display: flex; gap: 18px; margin: 10px 0; }
+.lp-linha-sel label { font-size: 13px; }
+.lp-linha-sel select { margin-left: 6px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; }
+
+/* Componente de busca com lista (cliente, tarefa, procedimento) */
+.lp-busca { position: relative; }
+.lp-lista {
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 5;
+  max-height: 220px; overflow: auto; background: #fff;
+  border: 1px solid #144D2E; border-radius: 0 0 6px 6px; box-shadow: 0 6px 16px rgba(0,0,0,.18);
+}
+.lp-op {
+  padding: 6px 8px; cursor: pointer; font-size: 13px;
+  /* Mostra o texto inteiro da opção (tarefa, cliente, processo), sem reticências:
+     quebra em várias linhas em vez de cortar, sobrepondo qualquer ellipsis herdado
+     do Legale. */
+  white-space: normal; overflow: visible; text-overflow: clip;
+  overflow-wrap: anywhere; word-break: break-word; line-height: 1.35;
+}
+.lp-op:hover { background: #eef4f0; }
+.lp-op-vazio { padding: 6px 8px; color: #888; font-size: 12px; }
+
+/* Seção judicial (opcional) */
+.lp-judicial { margin: 10px 0; border: 1px solid #e3e3e3; border-radius: 6px; padding: 4px 10px; }
+.lp-judicial > summary { cursor: pointer; color: #144D2E; font-size: 13px; font-weight: 600; padding: 4px 0; }
+.lp-linha-check { display: flex; flex-direction: column; gap: 4px; margin: 8px 0 4px; font-size: 13px; }
+.lp-linha-check label { display: flex; align-items: center; gap: 6px; }
+
+.lp-erro { color: #b3261e; font-size: 12px; margin-top: 8px; }
+.lp-modal-acoes { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+.lp-modal-acoes button { cursor: pointer; border-radius: 4px; padding: 6px 12px; border: none; }
+.lp-ok { background: #144D2E; color: #fff; }
+.lp-cancelar { background: #eee; color: #333; }
+/* Feature (v0.11.0): "Gravar e novo" , grava e reabre o popup no mesmo compromisso. */
+.lp-novo { background: #B4892A; color: #10331f; }
+.lp-novo:hover { background: #9c7522; }
+
+/* Toast */
+.lp-toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999999;
+  background: #144D2E; color: #fff; padding: 10px 16px; border-radius: 6px;
+  font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,.2);
+}
+.lp-toast.erro { background: #b3261e; }
+
+/* Meta 3: oculta compromissos concluídos quando o filtro está ligado. */
+.lp-oculto-concluido { display: none !important; }
+
+/* v0.10.0 , adições (aditivas, não alteram regras acima). */
+/* Feature 1: X para fechar o popup de lançamento sem gravar. */
+.lp-modal { position: relative; }
+.lp-fechar {
+  position: absolute; top: 8px; right: 10px;
+  width: 26px; height: 26px; line-height: 24px; text-align: center;
+  border: none; border-radius: 50%; cursor: pointer; padding: 0;
+  background: #eef4f0; color: #144D2E; font-size: 14px;
+}
+.lp-fechar:hover { background: #b3261e; color: #fff; }
+/* Aviso de modo teste dentro do popup. */
+.lp-teste-aviso {
+  margin: 0 0 10px; padding: 6px 10px; border-radius: 6px;
+  background: #fbf6ea; color: #7a5a12; border: 1px solid #e6d9b0; font-size: 12px;
+}
+/* Feature 2: botão "Lançar TS" no painel do compromisso. */
+.lp-cron-ts {
+  border: none; border-radius: 4px; cursor: pointer; padding: 2px 8px;
+  background: #144D2E; color: #fff; font-size: 12px; font-weight: 600;
+}
+.lp-cron-ts:hover { background: #B4892A; }
+/* Feature 2: botão "🕐" no cartão da agenda (ao lado do "+"). */
+.lp-card-ts {
+  position: absolute; top: 1px; right: 17px;
+  width: 14px; height: 14px; line-height: 12px; text-align: center;
+  border: none; border-radius: 3px; cursor: pointer;
+  background: #eef4f0; color: #144D2E; font-size: 10px; padding: 0;
+}
+.lp-card-ts:hover { background: #B4892A; color: #fff; }
+/* dá espaço ao segundo botão no cartão para não cobrir o título. */
+.lp-card .lp-card-t { padding-right: 20px; }
+
+/* ===================== v0.15.0: Busca de Tarefas ===================== */
+/* Botão flutuante 🔍, empilhado acima do mini player (que fica em bottom:18px). */
+#lp-busca-btn {
+  position: fixed; right: 18px; bottom: 72px; z-index: 2147483000;
+  width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+  background: #144D2E; color: #fff; font-size: 19px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,.28); transition: background .15s, transform .15s;
+}
+#lp-busca-btn:hover { background: #1c6a3f; transform: scale(1.06); }
+
+/* Popup de busca (reusa .lp-modal-bg/.lp-modal; só amplia a largura). */
+.lp-busca-modal { width: 560px; max-width: 92vw; }
+.lp-busca-abas { display: flex; gap: 8px; margin: 4px 0 12px; border-bottom: 1px solid #e3e3e3; }
+.lp-aba {
+  cursor: pointer; border: none; background: transparent; padding: 8px 12px;
+  font-size: 13px; color: #555; border-bottom: 2px solid transparent; font-weight: 600;
+}
+.lp-aba.ativa { color: #144D2E; border-bottom-color: #144D2E; }
+.lp-busca-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.lp-busca-grid .lp-f-nome { }
+.lp-busca-grid .lp-campo select { width: 100%; box-sizing: border-box; padding: 5px 7px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+.lp-busca-acoes { display: flex; gap: 10px; justify-content: flex-end; margin: 12px 0 6px; }
+.lp-buscar { cursor: pointer; border: none; border-radius: 4px; padding: 6px 14px; background: #144D2E; color: #fff; }
+.lp-buscar:hover { background: #1c6a3f; }
+.lp-limpar { cursor: pointer; border: none; border-radius: 4px; padding: 6px 12px; background: #eee; color: #333; }
+.lp-busca-status { font-size: 12px; color: #555; margin: 4px 0; min-height: 16px; }
+.lp-busca-result { max-height: 46vh; overflow-y: auto; }
+
+/* Linha de tarefa no resultado / favoritos */
+.lp-tar { display: flex; align-items: center; gap: 8px; padding: 7px 4px; border-bottom: 1px solid #eee; }
+.lp-tar:last-child { border-bottom: none; }
+.lp-tar-fav { cursor: pointer; border: none; background: transparent; font-size: 18px; line-height: 1; color: #B4892A; padding: 0 2px; }
+.lp-tar-fav.on { color: #B4892A; }
+.lp-tar-info { flex: 1 1 auto; min-width: 0; }
+.lp-tar-t { font-size: 13px; color: #222; overflow-wrap: anywhere; }
+.lp-tar-t b { color: #144D2E; margin-right: 4px; font-variant-numeric: tabular-nums; }
+.lp-tar-sub { font-size: 11px; color: #777; overflow-wrap: anywhere; }
+.lp-tar-abrir { cursor: pointer; border: 1px solid #144D2E; background: #fff; color: #144D2E; border-radius: 4px; padding: 4px 10px; font-size: 12px; white-space: nowrap; }
+.lp-tar-abrir:hover { background: #eef4f0; }
+
+@media (max-width: 600px) { .lp-busca-grid { grid-template-columns: 1fr; } }
