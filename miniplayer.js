@@ -55,8 +55,41 @@ window.LegalePlus = window.LegalePlus || {};
   let win = null;
   let ticker = null;
 
-  async function listar() { return (await LP.store.get(CHAVE_MARK, [])) || []; }
-  async function salvar(arr) { await LP.store.set(CHAVE_MARK, arr); }
+  /* Cache em memória dos marcadores = fonte de verdade do render. O armazenamento
+   * (via casca/chrome.storage) passa a ser só BACKUP de persistência. Motivo: o elo
+   * de storage do carregador pode não responder (ponte lenta/antiga); antes, cada
+   * render fazia `await LP.store.get(...)` e, se isso não resolvia, a lista ESPERAVA
+   * para sempre e ficava vazia (o mini player abria mas não listava). Agora a leitura
+   * é da memória (instantânea) e a escrita persiste em segundo plano, sem bloquear. */
+  let _cache = null;      // array de marcadores em memória (null = ainda não semeado)
+  let _semeando = null;   // Promise única de semeadura inicial
+
+  // Lê o storage com TETO de tempo: um elo travado nunca segura o render.
+  function _lerStorageComTeto(ms) {
+    return Promise.race([
+      Promise.resolve().then(() => LP.store.get(CHAVE_MARK, [])).catch(() => null),
+      new Promise((r) => setTimeout(() => r(null), ms)), // null = não respondeu a tempo
+    ]);
+  }
+  async function _garantirCache() {
+    if (_cache) return _cache;
+    if (!_semeando) {
+      _semeando = (async () => {
+        const v = await _lerStorageComTeto(700);
+        _cache = Array.isArray(v) ? v : []; // adota o storage só se respondeu; senão começa vazio
+        return _cache;
+      })();
+    }
+    await _semeando;
+    return _cache;
+  }
+
+  async function listar() { return await _garantirCache(); }
+  async function salvar(arr) {
+    _cache = Array.isArray(arr) ? arr : [];
+    // Persistência best-effort: em segundo plano, sem bloquear nem estourar se falhar.
+    try { Promise.resolve().then(() => LP.store.set(CHAVE_MARK, _cache)).catch(() => {}); } catch (_) {}
+  }
   function novoMid() { return Date.now().toString(36) + '-' + (++seq); }
 
   function hhmm(ts) {

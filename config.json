@@ -1,5 +1,5 @@
 {
-  "versao": "0.17.9",
+  "versao": "0.17.10",
   "features": {
     "expandirCompromissos": true,
     "cronometroTimesheet": true,
